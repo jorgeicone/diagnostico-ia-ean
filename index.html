@@ -205,6 +205,25 @@
       font-size:0.7rem;font-weight:800;color:var(--coral2);
       text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;
     }
+    .scale{display:flex;align-items:stretch;gap:0;margin-top:26px;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
+    .scale-step{
+      flex:1;padding:12px 10px;text-align:center;background:rgba(255,255,255,0.03);
+      border-right:1px solid var(--border);position:relative;
+    }
+    .scale-step:last-child{border-right:none;}
+    .scale-step .s-em{font-size:1.1rem;display:block;margin-bottom:4px;opacity:.45;}
+    .scale-step .s-nm{font-size:0.76rem;font-weight:800;color:var(--t3);letter-spacing:.2px;}
+    .scale-step .s-tx{font-size:0.66rem;color:var(--t3);margin-top:4px;line-height:1.4;display:none;}
+    .scale-step.on{background:rgba(255,255,255,0.09);}
+    .scale-step.on .s-em{opacity:1;}
+    .scale-step.on .s-nm{color:var(--t1);}
+    .scale-step.on .s-tx{display:block;color:var(--t2);}
+    .scale-step.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;}
+    .lv-p .scale-step.on::after{background:#4C8FD6;}
+    .lv-f .scale-step.on::after{background:#00A8C4;}
+    .lv-e .scale-step.on::after{background:#00C99B;}
+    .scale-lead{font-size:0.68rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--t3);margin-top:26px;margin-bottom:8px;text-align:center;}
+    @media(max-width:520px){ .scale{flex-direction:column;} .scale-step{border-right:none;border-bottom:1px solid var(--border);} }
     .open-hint{
       background:rgba(0,168,150,0.10);border:1px solid rgba(0,168,150,0.30);
       border-radius:12px;padding:12px 16px;margin-bottom:14px;
@@ -307,7 +326,7 @@
       width:300px;height:300px;border-radius:50%;
       filter:blur(80px);opacity:.25;z-index:0;
     }
-    .lv-p .res-hero::before{background:#7A8CA8;}
+    .lv-p .res-hero::before{background:#4C8FD6;}
     .lv-f .res-hero::before{background:#00aaff;}
     .lv-e .res-hero::before{background:var(--green);}
     .res-hero>*{position:relative;z-index:1;}
@@ -318,8 +337,8 @@
       font-size:0.75rem;font-weight:800;letter-spacing:2px;
       text-transform:uppercase;margin-bottom:20px;
     }
-    .lv-p .res-badge{background:rgba(122,140,168,0.18);border:1px solid rgba(122,140,168,0.45);color:#A8BBD4;}
-    .lv-f .res-badge{background:rgba(62,167,222,0.14);border:1px solid rgba(62,167,222,0.4);color:#6EC5F0;}
+    .lv-p .res-badge{background:rgba(76,143,214,0.16);border:1px solid rgba(76,143,214,0.45);color:#7FB6EA;}
+    .lv-f .res-badge{background:rgba(0,168,196,0.16);border:1px solid rgba(0,168,196,0.45);color:#3ED2E8;}
     .lv-e .res-badge{background:rgba(0,201,155,0.14);border:1px solid rgba(0,201,155,0.4);color:#00D9A5;}
 
     .score-circle{
@@ -328,7 +347,7 @@
       display:flex;flex-direction:column;align-items:center;justify-content:center;
       position:relative;
     }
-    .lv-p .score-circle{background:linear-gradient(135deg,#8FA2BD,#5A6E8C);box-shadow:0 0 40px rgba(122,140,168,0.3);}
+    .lv-p .score-circle{background:linear-gradient(135deg,#5C9FE0,#2A5FA8);box-shadow:0 0 40px rgba(76,143,214,0.4);}
     .lv-f .score-circle{background:linear-gradient(135deg,#00aaff,#0055cc);box-shadow:0 0 40px rgba(0,170,255,0.35);}
     .lv-e .score-circle{background:linear-gradient(135deg,#00C99B,#00786F);box-shadow:0 0 40px rgba(0,201,155,0.35);}
 
@@ -337,8 +356,8 @@
 
     .res-name{font-size:1.7rem;font-weight:900;margin-bottom:6px;}
     .res-level{font-size:1rem;font-weight:700;margin-bottom:14px;}
-    .lv-p .res-level{color:#A8BBD4;}
-    .lv-f .res-level{color:#6EC5F0;}
+    .lv-p .res-level{color:#7FB6EA;}
+    .lv-f .res-level{color:#3ED2E8;}
     .lv-e .res-level{color:#00D9A5;}
 
     .res-msg{font-size:0.93rem;color:var(--t2);max-width:480px;margin:0 auto 20px;line-height:1.65;}
@@ -430,8 +449,8 @@
     tr:last-child td{border-bottom:none;}
 
     .pill{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.7rem;font-weight:800;white-space:nowrap;}
-    .pill-p{background:rgba(122,140,168,0.18);color:#A8BBD4;}
-    .pill-f{background:rgba(62,167,222,0.14);color:#6EC5F0;}
+    .pill-p{background:rgba(76,143,214,0.16);color:#7FB6EA;}
+    .pill-f{background:rgba(0,168,196,0.16);color:#3ED2E8;}
     .pill-e{background:rgba(0,201,155,0.14);color:#00D9A5;}
 
     .mini-bar{display:flex;align-items:center;gap:6px;}
@@ -472,7 +491,7 @@
     .q-chart-title{font-size:.7rem;font-weight:700;color:var(--t2);margin-bottom:10px;line-height:1.4;}
     .ans-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
     .ans-lbl{width:18px;font-size:.75rem;font-weight:900;text-align:center;}
-    .ans-lbl-a{color:#00D9A5;}.ans-lbl-b{color:#6EC5F0;}.ans-lbl-c{color:var(--coral);}
+    .ans-lbl-a{color:#00D9A5;}.ans-lbl-b{color:#3ED2E8;}.ans-lbl-c{color:var(--coral);}
     .ans-track{flex:1;background:rgba(255,255,255,.07);border-radius:50px;height:9px;overflow:hidden;}
     .ans-fill{height:100%;border-radius:50px;transition:width .6s ease;}
     .ans-fill-a{background:linear-gradient(90deg,#00d48a,#00a36b);}
@@ -698,6 +717,7 @@
       <div class="res-name" id="res-name"></div>
       <div class="res-level" id="res-level"></div>
       <p class="res-msg" id="res-msg"></p>
+      <div class="scale" id="res-scale"></div>
     </div>
 
     <div class="glass chart-card">
@@ -1059,11 +1079,14 @@ const MODS = [
 ];
 
 const LVLS = [
-  {key:"p",name:"Usuario/a de prompts",badge:"🌱 Usuario/a de prompts",cssClass:"lv-p",pillClass:"pill-p",emoji:"🌱",min:0,max:33,
-   msg:"Hoy le pides cosas a la IA y ella te devuelve texto. En cuatro horas vas a cruzar la línea: de pedir a construir. Este taller se diseñó exactamente para tu punto de partida — no necesitas saber programar ni pagar nada, y vas a salir con una pieza tuya funcionando y con enlace propio."},
-  {key:"f",name:"Operador/a de IA",badge:"🧭 Operador/a de IA",cssClass:"lv-f",pillClass:"pill-f",emoji:"🧭",min:34,max:66,
-   msg:"Ya resuelves tareas reales con IA, pero de a una y a pulso: cada vez arrancas de cero. Hoy subes un piso — de tareas sueltas a piezas que quedan operando — y sales sabiendo cuál de los seis ecosistemas usar para cada trabajo. Ese criterio es lo que separa usar la IA de trabajar con ella."},
-  {key:"e",name:"Constructor/a de IA",badge:"🏆 Constructor/a de IA",cssClass:"lv-e",pillClass:"pill-e",emoji:"🏆",min:67,max:100,
+  {key:"p",name:"Pides respuestas",badge:"💬 Pides respuestas",cssClass:"lv-p",pillClass:"pill-p",emoji:"💬",min:0,max:33,
+   short:"Le pides algo y la IA te devuelve texto.",
+   msg:"Hoy usas la IA como un buscador que escribe: le pides algo y te devuelve texto que copias y pegas. Es un punto de partida perfectamente normal — y este taller se diseñó para él. En cuatro horas cruzas la línea: no necesitas saber programar ni pagar nada, y sales con una pieza tuya funcionando y con enlace propio."},
+  {key:"f",name:"Resuelves tareas",badge:"⚡ Resuelves tareas",cssClass:"lv-f",pillClass:"pill-f",emoji:"⚡",min:34,max:66,
+   short:"Ya resuelves trabajo real, pero de a una tarea y arrancando de cero cada vez.",
+   msg:"Ya resuelves trabajo real con IA, pero de a una tarea y arrancando de cero cada vez: cada conversación empieza sin memoria. Hoy subes un piso — de tareas sueltas a piezas que quedan operando — y sales sabiendo cuál de los seis ecosistemas usar para cada trabajo. Ese criterio es lo que separa usar la IA de trabajar con ella."},
+  {key:"e",name:"Construyes piezas",badge:"🛠️ Construyes piezas",cssClass:"lv-e",pillClass:"pill-e",emoji:"🛠️",min:67,max:100,
+   short:"Haces cosas que otros usan sin que tú estés al lado.",
    msg:"Ya construyes con IA y se te nota. Lo que ganas hoy no es una herramienta más: es criterio. Cuándo NO usar el modelo caro, cómo darle memoria a tu operación con Projects y Skills, y cómo convertir lo que hoy haces tú en capacidad que le queda a tu área. Aviso: tu mesa te va a necesitar."}
 ];
 
@@ -1256,6 +1279,12 @@ function renderResult(total, lvl, modScores, nombre) {
   document.getElementById("res-name").textContent = nombre.split(" ")[0] + ",";
   document.getElementById("res-level").textContent = lvl.name;
   document.getElementById("res-msg").textContent = lvl.msg;
+  document.getElementById("res-scale").innerHTML = LVLS.map(l =>
+    `<div class="scale-step${l.key===lvl.key?" on":""}">
+       <span class="s-em">${l.emoji}</span>
+       <span class="s-nm">${l.name}</span>
+       <span class="s-tx">${l.short}</span>
+     </div>`).join("");
 
   // Module bars
   const barsList = document.getElementById("bars-list");
@@ -1428,7 +1457,7 @@ function renderAnalytics(records) {
       labels:bins,
       datasets:[{
         label:'%', data:binPcts, borderRadius:6, borderSkipped:false,
-        backgroundColor:['rgba(122,140,168,.7)','rgba(90,160,200,.7)','rgba(62,167,222,.75)','rgba(0,168,150,.8)','rgba(0,201,155,.9)']
+        backgroundColor:['rgba(76,143,214,.75)','rgba(0,168,196,.75)','rgba(0,190,190,.8)','rgba(0,168,150,.8)','rgba(0,201,155,.9)']
       }]
     },
     options:{
@@ -1525,7 +1554,7 @@ function renderAnalytics(records) {
       labels:['D1','D2','D3','D4','D5'],
       datasets:[{
         label:'% promedio', data:modAvgPct, borderRadius:6, borderSkipped:false,
-        backgroundColor:modAvgPct.map(v => v>=67?'rgba(0,201,155,.8)':v>=34?'rgba(62,167,222,.75)':'rgba(122,140,168,.7)')
+        backgroundColor:modAvgPct.map(v => v>=67?'rgba(0,201,155,.85)':v>=34?'rgba(0,168,196,.8)':'rgba(76,143,214,.75)')
       }]
     },
     options:{
@@ -1609,8 +1638,8 @@ function renderAdmin(records) {
   stats.innerHTML = `
     <div class="glass stat"><div class="stat-lbl">Total</div><div class="stat-val">${records.length}</div><div class="stat-sub">participantes</div></div>
     <div class="glass stat"><div class="stat-lbl">Promedio</div><div class="stat-val" style="background:linear-gradient(135deg,#00A896,#3EA7DE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${avg}</div><div class="stat-sub">puntos del grupo</div></div>
-    <div class="glass stat"><div class="stat-lbl">${LVLS[0].badge}</div><div class="stat-val" style="color:#A8BBD4">${cnt.p}</div><div class="stat-sub">${pct("p")}% del grupo</div></div>
-    <div class="glass stat"><div class="stat-lbl">${LVLS[1].badge}</div><div class="stat-val" style="color:#6EC5F0">${cnt.f}</div><div class="stat-sub">${pct("f")}% del grupo</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[0].badge}</div><div class="stat-val" style="color:#7FB6EA">${cnt.p}</div><div class="stat-sub">${pct("p")}% del grupo</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[1].badge}</div><div class="stat-val" style="color:#3ED2E8">${cnt.f}</div><div class="stat-sub">${pct("f")}% del grupo</div></div>
     <div class="glass stat"><div class="stat-lbl">${LVLS[2].badge}</div><div class="stat-val" style="color:#00D9A5">${cnt.e}</div><div class="stat-sub">${pct("e")}% del grupo</div></div>
   `;
 
@@ -1999,8 +2028,8 @@ function renderDashboard(records) {
   document.getElementById('dash-stats').innerHTML = `
     <div class="glass stat"><div class="stat-lbl">Total</div><div class="stat-val">${records.length}</div><div class="stat-sub">participantes</div></div>
     <div class="glass stat"><div class="stat-lbl">Promedio</div><div class="stat-val" style="background:linear-gradient(135deg,#00A896,#3EA7DE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${avg}</div><div class="stat-sub">puntos del grupo</div></div>
-    <div class="glass stat"><div class="stat-lbl">${LVLS[0].badge}</div><div class="stat-val" style="color:#A8BBD4">${lc.p}</div><div class="stat-sub">${pct('p')}%</div></div>
-    <div class="glass stat"><div class="stat-lbl">${LVLS[1].badge}</div><div class="stat-val" style="color:#6EC5F0">${lc.f}</div><div class="stat-sub">${pct('f')}%</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[0].badge}</div><div class="stat-val" style="color:#7FB6EA">${lc.p}</div><div class="stat-sub">${pct('p')}%</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[1].badge}</div><div class="stat-val" style="color:#3ED2E8">${lc.f}</div><div class="stat-sub">${pct('f')}%</div></div>
     <div class="glass stat"><div class="stat-lbl">${LVLS[2].badge}</div><div class="stat-val" style="color:#00D9A5">${lc.e}</div><div class="stat-sub">${pct('e')}%</div></div>`;
   if (!records.length) return;
 
@@ -2012,7 +2041,7 @@ function renderDashboard(records) {
   records.forEach(r=>{ binPcts[Math.min(4,Math.floor(r.score/20))]++; });
   const bpPct = binPcts.map(v=>records.length?Math.round(v/records.length*100):0);
 
-  _dci.dist = new Chart(document.getElementById('dch-dist'),{type:'bar',data:{labels:['0–20','21–40','41–60','61–80','81–100'],datasets:[{data:bpPct,borderRadius:6,borderSkipped:false,backgroundColor:['rgba(122,140,168,.7)','rgba(90,160,200,.7)','rgba(62,167,222,.75)','rgba(0,168,150,.8)','rgba(0,201,155,.9)']}]},options:{plugins:{legend:{display:false},datalabels:{color:'#fff',font:{weight:'bold',size:12},anchor:'end',align:'top',formatter:v=>v>0?v+'%':''}},scales:{x:CHART_SCALE.x,y:{...CHART_SCALE.y,min:0,max:100,ticks:{...CHART_SCALE.y.ticks,callback:v=>v+'%'}}}}});
+  _dci.dist = new Chart(document.getElementById('dch-dist'),{type:'bar',data:{labels:['0–20','21–40','41–60','61–80','81–100'],datasets:[{data:bpPct,borderRadius:6,borderSkipped:false,backgroundColor:['rgba(76,143,214,.75)','rgba(0,168,196,.75)','rgba(0,190,190,.8)','rgba(0,168,150,.8)','rgba(0,201,155,.9)']}]},options:{plugins:{legend:{display:false},datalabels:{color:'#fff',font:{weight:'bold',size:12},anchor:'end',align:'top',formatter:v=>v>0?v+'%':''}},scales:{x:CHART_SCALE.x,y:{...CHART_SCALE.y,min:0,max:100,ticks:{...CHART_SCALE.y.ticks,callback:v=>v+'%'}}}}});
 
   _dci.levels = new Chart(document.getElementById('dch-levels'),{type:'doughnut',data:{labels:LVLS.map(l=>l.badge),datasets:[{data:[lc.p,lc.f,lc.e],backgroundColor:['rgba(255,179,71,.85)','rgba(102,204,255,.85)','rgba(0,212,138,.85)'],borderWidth:0,hoverOffset:8}]},options:{plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,.65)',font:{size:10},boxWidth:10,padding:10}},datalabels:{color:'#fff',font:{weight:'bold',size:12},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}}}}});
 
@@ -2029,7 +2058,7 @@ function renderDashboard(records) {
   const ms=Array(5).fill(0), mx=Array(5).fill(0);
   records.forEach(r=>{if(r.modulos)r.modulos.forEach((m,i)=>{ms[i]+=m.score;mx[i]=m.max;});});
   const mp=ms.map((s,i)=>mx[i]>0?Math.round(s/records.length/mx[i]*100):0);
-  _dci.modsAvg=new Chart(document.getElementById('dch-mods-avg'),{type:'bar',data:{labels:['D1','D2','D3','D4','D5'],datasets:[{data:mp,borderRadius:6,borderSkipped:false,backgroundColor:mp.map(v=>v>=67?'rgba(0,201,155,.8)':v>=34?'rgba(62,167,222,.75)':'rgba(122,140,168,.7)')}]},options:{plugins:{legend:{display:false},datalabels:{color:'#fff',font:{weight:'bold',size:11},anchor:'end',align:'top',formatter:v=>v+'%'}},scales:{x:CHART_SCALE.x,y:{...CHART_SCALE.y,min:0,max:100,ticks:{...CHART_SCALE.y.ticks,callback:v=>v+'%'}}}}});
+  _dci.modsAvg=new Chart(document.getElementById('dch-mods-avg'),{type:'bar',data:{labels:['D1','D2','D3','D4','D5'],datasets:[{data:mp,borderRadius:6,borderSkipped:false,backgroundColor:mp.map(v=>v>=67?'rgba(0,201,155,.85)':v>=34?'rgba(0,168,196,.8)':'rgba(76,143,214,.75)')}]},options:{plugins:{legend:{display:false},datalabels:{color:'#fff',font:{weight:'bold',size:11},anchor:'end',align:'top',formatter:v=>v+'%'}},scales:{x:CHART_SCALE.x,y:{...CHART_SCALE.y,min:0,max:100,ticks:{...CHART_SCALE.y.ticks,callback:v=>v+'%'}}}}});
 
   // Module donuts
   const modNms=['D1 — Evidencia','D2 — Contexto','D3 — Construcción','D4 — Operación y entrega','D5 — Criterio y costo'];
