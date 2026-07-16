@@ -941,6 +941,12 @@ async function getToken() {
   } catch(e) { console.error("Token fetch failed", e); return null; }
 }
 
+/* Descarta filas de prueba o corruptas: sin puntaje o sin dimensiones no entran a ningún cálculo */
+function isValidRecord(r) {
+  return !!r && typeof r.score === "number" && isFinite(r.score)
+         && Array.isArray(r.modulos) && r.modulos.length === MODS.length;
+}
+
 /* Fallback local cache (if offline or API fails) */
 function _saveLocal(record) {
   try {
@@ -991,8 +997,8 @@ async function loadFromCloud() {
     ).finally(()=>clearTimeout(timer));
     if (!res.ok) throw new Error(await res.text());
     const rows = await res.json();
-    const all = rows.map(r => r.data).filter(Boolean);
-    return all.length ? all : _getLocal();
+    const all = rows.map(r => r.data).filter(isValidRecord);
+    return all.length ? all : _getLocal().filter(isValidRecord);
   } catch(e) {
     console.error("loadFromCloud failed:", e);
     return _getLocal(); // respaldo
@@ -1462,7 +1468,7 @@ function renderAnalytics(records) {
   _ci.levels = new Chart(document.getElementById('ch-levels'), {
     type:'doughnut',
     data:{
-      labels:['🌱 Curioso/a','🧭 Explorador/a','🏆 Experto'],
+      labels:LVLS.map(l=>l.badge),
       datasets:[{data:[lc.p,lc.f,lc.e], backgroundColor:['rgba(255,179,71,.85)','rgba(102,204,255,.85)','rgba(0,212,138,.85)'], borderWidth:0, hoverOffset:8}]
     },
     options:{
@@ -1569,7 +1575,7 @@ function renderAnalytics(records) {
     _ci[`mod${mi}`] = new Chart(document.getElementById(`ch-mod-${mi}`), {
       type:'doughnut',
       data:{
-        labels:['Curioso/a','Explorador/a','Experto/a'],
+        labels:LVLS.map(l=>l.name),
         datasets:[{data:[mc.p,mc.f,mc.e], backgroundColor:['rgba(255,179,71,.85)','rgba(102,204,255,.85)','rgba(0,212,138,.85)'], borderWidth:0}]
       },
       options:{
@@ -1620,13 +1626,13 @@ function renderAdmin(records) {
   stats.innerHTML = `
     <div class="glass stat"><div class="stat-lbl">Total</div><div class="stat-val">${records.length}</div><div class="stat-sub">participantes</div></div>
     <div class="glass stat"><div class="stat-lbl">Promedio</div><div class="stat-val" style="background:linear-gradient(135deg,#E8401C,#D4A847);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${avg}</div><div class="stat-sub">puntos del grupo</div></div>
-    <div class="glass stat"><div class="stat-lbl">🌱 Curioso/a</div><div class="stat-val" style="color:#ffb347">${cnt.p}</div><div class="stat-sub">${pct("p")}% del grupo</div></div>
-    <div class="glass stat"><div class="stat-lbl">🧭 Explorador/a</div><div class="stat-val" style="color:#66ccff">${cnt.f}</div><div class="stat-sub">${pct("f")}% del grupo</div></div>
-    <div class="glass stat"><div class="stat-lbl">🏆 Experto</div><div class="stat-val" style="color:#00d48a">${cnt.e}</div><div class="stat-sub">${pct("e")}% del grupo</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[0].badge}</div><div class="stat-val" style="color:#ffb347">${cnt.p}</div><div class="stat-sub">${pct("p")}% del grupo</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[1].badge}</div><div class="stat-val" style="color:#66ccff">${cnt.f}</div><div class="stat-sub">${pct("f")}% del grupo</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[2].badge}</div><div class="stat-val" style="color:#00d48a">${cnt.e}</div><div class="stat-sub">${pct("e")}% del grupo</div></div>
   `;
 
-  const lvlMeta = {p:{cls:"pill-p",lbl:"Curioso/a"},f:{cls:"pill-f",lbl:"Explorador/a"},e:{cls:"pill-e",lbl:"Experto/a"}};
-  const modShort = ['Fundac.','Aplic.','Interac.','Estrat.','Ética'];
+  const lvlMeta = Object.fromEntries(LVLS.map(l=>[l.key,{cls:l.pillClass,lbl:l.name}]));
+  const modShort = ['Evidencia','Contexto','Construc.','Operación','Criterio'];
 
   // Store records globally for modal access
   window._adminRecords = records;
@@ -1847,19 +1853,19 @@ function generateIconeReport() {
   const top3 = modWithPct.slice(0,3);
   const bot3 = [...modWithPct].sort((a,b)=>a.p-b.p).slice(0,3);
 
-  const nivelGrupo = avg>=67?'Experto/a IA':avg>=34?'Explorador/a IA':'Curioso/a IA';
-  const recomTxt = nivelGrupo==='Experto/a IA'
-    ? 'El grupo demuestra un dominio sólido de la IA. Conviene enfocar el curso en estrategia avanzada, automatización y criterio ético para consolidar soluciones de alto impacto.'
-    : nivelGrupo==='Explorador/a IA'
-    ? 'El grupo está consolidando sus habilidades con IA. Se recomienda reforzar las dimensiones con menor puntaje mediante práctica guiada con casos reales.'
-    : 'El grupo parte desde los fundamentos. Se recomienda iniciar con conceptos base y prompting práctico antes de avanzar a la integración estratégica.';
+  const nivelGrupo = (LVLS.find(l=>avg>=l.min&&avg<=l.max)||LVLS[0]).name;
+  const recomTxt = avg>=67
+    ? 'El grupo ya construye con IA. El valor de las cuatro horas no está en mostrarles herramientas sino en darles criterio: acortar la demo de cada ecosistema, alargar el bloque de Claude y forzar la conversación de costo con GLM-5.2. Sembrar un perfil avanzado por mesa para que jalone al resto.'
+    : avg>=34
+    ? 'El grupo resuelve tareas pero aún no construye piezas. Mantener el reparto previsto y proteger los 60 minutos de Claude: ahí ocurre el salto. Reforzar las dimensiones más bajas con el caso propio de cada mesa, no con ejemplos genéricos.'
+    : 'El grupo parte de usar la IA como buscador. Dar 5 minutos extra de contexto en la apertura, emparejar cada mesa con al menos un perfil más avanzado y bajar la ambición del artefacto: que sea simple, pero que quede publicado. Una pieza funcionando vale más que tres a medias.';
 
   _iconeReport = '**Diagnóstico de Apertura · Inteligencia Artificial Aplicada — Universidad Ean**\n\n'
     + 'El grupo completó el diagnóstico con **' + total + ' participantes**. El promedio general fue de **' + avg + '/100**, ubicando al equipo en el nivel **' + nivelGrupo + '**.\n\n'
     + '**Composición del grupo:**\n'
-    + '• 🌱 Curioso/a IA: ' + lc.p + ' persona(s) — ' + Math.round(lc.p/total*100) + '%\n'
-    + '• 🧭 Explorador/a IA: ' + lc.f + ' persona(s) — ' + Math.round(lc.f/total*100) + '%\n'
-    + '• 🏆 Experto/a IA: ' + lc.e + ' persona(s) — ' + Math.round(lc.e/total*100) + '%\n\n'
+    + '• ' + LVLS[0].badge + ': ' + lc.p + ' persona(s) — ' + Math.round(lc.p/total*100) + '%\n'
+    + '• ' + LVLS[1].badge + ': ' + lc.f + ' persona(s) — ' + Math.round(lc.f/total*100) + '%\n'
+    + '• ' + LVLS[2].badge + ': ' + lc.e + ' persona(s) — ' + Math.round(lc.e/total*100) + '%\n\n'
     + '**Fortalezas del grupo (dimensiones con mayor dominio):**\n'
     + '• ' + top3[0].n + ': ' + top3[0].p + '%\n'
     + '• ' + top3[1].n + ': ' + top3[1].p + '%\n'
@@ -2010,9 +2016,9 @@ function renderDashboard(records) {
   document.getElementById('dash-stats').innerHTML = `
     <div class="glass stat"><div class="stat-lbl">Total</div><div class="stat-val">${records.length}</div><div class="stat-sub">participantes</div></div>
     <div class="glass stat"><div class="stat-lbl">Promedio</div><div class="stat-val" style="background:linear-gradient(135deg,#E8401C,#D4A847);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${avg}</div><div class="stat-sub">puntos del grupo</div></div>
-    <div class="glass stat"><div class="stat-lbl">🌱 Curioso/a</div><div class="stat-val" style="color:#ffb347">${lc.p}</div><div class="stat-sub">${pct('p')}%</div></div>
-    <div class="glass stat"><div class="stat-lbl">🧭 Explorador/a</div><div class="stat-val" style="color:#66ccff">${lc.f}</div><div class="stat-sub">${pct('f')}%</div></div>
-    <div class="glass stat"><div class="stat-lbl">🏆 Experto</div><div class="stat-val" style="color:#00d48a">${lc.e}</div><div class="stat-sub">${pct('e')}%</div></div>`;
+    <div class="glass stat"><div class="stat-lbl">${LVLS[0].badge}</div><div class="stat-val" style="color:#ffb347">${lc.p}</div><div class="stat-sub">${pct('p')}%</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[1].badge}</div><div class="stat-val" style="color:#66ccff">${lc.f}</div><div class="stat-sub">${pct('f')}%</div></div>
+    <div class="glass stat"><div class="stat-lbl">${LVLS[2].badge}</div><div class="stat-val" style="color:#00d48a">${lc.e}</div><div class="stat-sub">${pct('e')}%</div></div>`;
   if (!records.length) return;
 
   // Reuse renderAnalytics logic but with 'd' prefixed canvas IDs
@@ -2025,7 +2031,7 @@ function renderDashboard(records) {
 
   _dci.dist = new Chart(document.getElementById('dch-dist'),{type:'bar',data:{labels:['0–20','21–40','41–60','61–80','81–100'],datasets:[{data:bpPct,borderRadius:6,borderSkipped:false,backgroundColor:['rgba(255,140,0,.7)','rgba(255,200,60,.7)','rgba(100,190,255,.7)','rgba(0,200,120,.75)','rgba(0,212,138,.9)']}]},options:{plugins:{legend:{display:false},datalabels:{color:'#fff',font:{weight:'bold',size:12},anchor:'end',align:'top',formatter:v=>v>0?v+'%':''}},scales:{x:CHART_SCALE.x,y:{...CHART_SCALE.y,min:0,max:100,ticks:{...CHART_SCALE.y.ticks,callback:v=>v+'%'}}}}});
 
-  _dci.levels = new Chart(document.getElementById('dch-levels'),{type:'doughnut',data:{labels:['🌱 Curioso/a','🧭 Explorador/a','🏆 Experto'],datasets:[{data:[lc.p,lc.f,lc.e],backgroundColor:['rgba(255,179,71,.85)','rgba(102,204,255,.85)','rgba(0,212,138,.85)'],borderWidth:0,hoverOffset:8}]},options:{plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,.65)',font:{size:10},boxWidth:10,padding:10}},datalabels:{color:'#fff',font:{weight:'bold',size:12},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}}}}});
+  _dci.levels = new Chart(document.getElementById('dch-levels'),{type:'doughnut',data:{labels:LVLS.map(l=>l.badge),datasets:[{data:[lc.p,lc.f,lc.e],backgroundColor:['rgba(255,179,71,.85)','rgba(102,204,255,.85)','rgba(0,212,138,.85)'],borderWidth:0,hoverOffset:8}]},options:{plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,.65)',font:{size:10},boxWidth:10,padding:10}},datalabels:{color:'#fff',font:{weight:'bold',size:12},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}}}}});
 
   // Local + Rol charts
   const lm={}, rm={};
@@ -2048,7 +2054,7 @@ function renderDashboard(records) {
   modNms.forEach((_,mi)=>{
     const mc={p:0,f:0,e:0};
     records.forEach(r=>{if(!r.modulos||!r.modulos[mi])return;const p=r.modulos[mi].max>0?r.modulos[mi].score/r.modulos[mi].max*100:0;if(p<34)mc.p++;else if(p<67)mc.f++;else mc.e++;});
-    _dci[`mod${mi}`]=new Chart(document.getElementById(`dch-mod-${mi}`),{type:'doughnut',data:{labels:['Curioso/a','Explorador/a','Experto/a'],datasets:[{data:[mc.p,mc.f,mc.e],backgroundColor:['rgba(255,179,71,.85)','rgba(102,204,255,.85)','rgba(0,212,138,.85)'],borderWidth:0}]},options:{plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,.6)',font:{size:9},boxWidth:8,padding:6}},datalabels:{color:'#fff',font:{weight:'bold',size:12},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t&&v>0?Math.round(v/t*100)+'%':''}}}}});
+    _dci[`mod${mi}`]=new Chart(document.getElementById(`dch-mod-${mi}`),{type:'doughnut',data:{labels:LVLS.map(l=>l.name),datasets:[{data:[mc.p,mc.f,mc.e],backgroundColor:['rgba(255,179,71,.85)','rgba(102,204,255,.85)','rgba(0,212,138,.85)'],borderWidth:0}]},options:{plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,.6)',font:{size:9},boxWidth:8,padding:6}},datalabels:{color:'#fff',font:{weight:'bold',size:12},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t&&v>0?Math.round(v/t*100)+'%':''}}}}});
   });
 
   // Question bars
